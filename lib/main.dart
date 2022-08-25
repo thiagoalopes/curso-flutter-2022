@@ -1,69 +1,71 @@
 import 'package:flutter/material.dart';
-import 'package:projeto_perguntas/questao.dart';
-import 'package:projeto_perguntas/resposta.dart';
-
+import 'package:projeto_perguntas/questionario.dart';
+import 'package:projeto_perguntas/resultado.dart';
 
 class PerguntasAppState extends State<PerguntaApp> {
-
   final List<Map<String, Object>> _perguntas = [
     {
-      'questao':'Qual seu time favorito?',
-      'respostas':['Flamengo','Vasco','Fluminense'],
+      'questao': 'Qual seu time favorito?',
+      'respostas': [
+        { 'texto': 'Flamengo', 'pontuacao': 10 },
+        { 'texto': 'Vasco', 'pontuacao': 3 },
+        { 'texto': 'Fluminense', 'pontuacao': 5 }
+      ],
     },
     {
-      'questao':'Qual seu animal preferido?',
-      'respostas':['Gato','Cachorro','Henrique']
+      'questao': 'Qual seu animal preferido?',
+      'respostas': [
+        { 'texto': 'Gato', 'pontuacao': 5 }, 
+        { 'texto': 'Cachorro', 'pontuacao': 10 }, 
+        { 'texto': 'Cobra', 'pontuacao': 3 } 
+      ]
     },
   ];
-
-  List<String> get respostas => _perguntas[_respostaSelecionada].cast()['respostas'];
-  List<Widget> get widgets => respostas.map((e) => Resposta(e, _responder)).toList();
-
+  
+  int _pontuacaoTotal = 0;
   int _respostaSelecionada = 0;
+  bool get temPerguntas => _respostaSelecionada < _perguntas.length;
 
-  void _responder() {
-    setState(() {
-      if(_respostaSelecionada < _perguntas.length - 1){
+  void _responder(int pontuacao) {
+    if (temPerguntas) {
+      setState(() {
+        _pontuacaoTotal += pontuacao;
         _respostaSelecionada++;
-      }
-      print(_respostaSelecionada);
+      });
+    }
+  }
+
+  void reiniciar() {
+    setState(() {
+      _pontuacaoTotal = 0;
+      _respostaSelecionada = 0;
     });
   }
 
   @override
-  Widget build(BuildContext context){
+  Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        appBar: AppBar(
-          title: const Text(
-            'Perguntas',
-            textAlign: TextAlign.center
-            ),
-        ),
-        body: Column(
-            children: [
-              Questao(_perguntas[_respostaSelecionada]['questao'].toString()),
-              ...widgets
-            ],
-        )
+          appBar: AppBar(
+            title: const Text('Perguntas', textAlign: TextAlign.center),
+          ),
+          body: temPerguntas
+              ? Questionario(_perguntas[_respostaSelecionada], _responder)
+              : Resultado('Parabéns!!!', _pontuacaoTotal, reiniciar)
         ),
     );
-
   }
 }
 
 class PerguntaApp extends StatefulWidget {
+ const PerguntaApp({super.key});
 
-  PerguntaApp({super.key});
-  
   @override
   PerguntasAppState createState() {
     return PerguntasAppState();
   }
-  
-
 }
 
 main() {
-  runApp(PerguntaApp());
+  runApp(const PerguntaApp());
 }

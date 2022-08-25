@@ -10,12 +10,12 @@ class Resposta extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+      padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
       child: ElevatedButton(
           style: ElevatedButton.styleFrom(
-            fixedSize: Size(20, 10)
+            fixedSize: const Size(20, 10)
           ),
-          onPressed: acao,
+          onPressed: (acao),
           child: Text(resposta)),
     );
   }
